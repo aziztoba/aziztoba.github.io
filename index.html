@@ -1,0 +1,406 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Abdulaziz Toba Abdulaziz - Senior .NET Software Engineer</title>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        html {
+            scroll-behavior: smooth;
+        }
+
+        body {
+            font-family: 'Inter', -apple-system, BlinkMacSystemFont, sans-serif;
+            background: #0A0A0A;
+            color: #e5e5e5;
+            line-height: 1.7;
+            overflow-x: hidden;
+            position: relative;
+        }
+
+        body::before {
+            content: '';
+            position: fixed;
+            top: 0;
+            left: 0;
+            right: 0;
+            bottom: 0;
+            background: radial-gradient(circle at 20% 50%, rgba(88, 28, 135, 0.08) 0%, transparent 50%),
+                        radial-gradient(circle at 80% 80%, rgba(37, 99, 235, 0.06) 0%, transparent 50%);
+            pointer-events: none;
+            z-index: 0;
+        }
+
+        .container {
+            max-width: 800px;
+            margin: 0 auto;
+            padding: 0 24px;
+            position: relative;
+            z-index: 1;
+        }
+
+        section {
+            padding: 60px 0;
+            opacity: 0;
+            transform: translateY(20px);
+            animation: fadeInUp 1s ease forwards;
+        }
+
+        section:nth-child(1) { animation-delay: 0.1s; }
+        section:nth-child(2) { animation-delay: 0.2s; }
+        section:nth-child(3) { animation-delay: 0.3s; }
+        section:nth-child(4) { animation-delay: 0.4s; }
+        section:nth-child(5) { animation-delay: 0.5s; }
+        section:nth-child(6) { animation-delay: 0.6s; }
+
+        @keyframes fadeInUp {
+            to {
+                opacity: 1;
+                transform: translateY(0);
+            }
+        }
+
+        .hero {
+            padding: 100px 0 80px;
+        }
+
+        h1 {
+            font-size: 3.2rem;
+            font-weight: 700;
+            color: #ffffff;
+            margin-bottom: 12px;
+            letter-spacing: -0.02em;
+            line-height: 1.1;
+        }
+
+        .title {
+            font-size: 1.3rem;
+            color: #a1a1aa;
+            font-weight: 400;
+            margin-bottom: 16px;
+        }
+
+        .subtitle {
+            font-size: 1.05rem;
+            color: #71717a;
+            max-width: 650px;
+            margin-bottom: 32px;
+            font-weight: 300;
+            line-height: 1.6;
+        }
+
+        .hero-links {
+            display: flex;
+            gap: 24px;
+            flex-wrap: wrap;
+        }
+
+        .link {
+            color: #8b5cf6;
+            text-decoration: none;
+            font-size: 0.95rem;
+            font-weight: 500;
+            transition: all 0.3s ease;
+            position: relative;
+            padding-bottom: 2px;
+        }
+
+        .link::after {
+            content: '';
+            position: absolute;
+            bottom: 0;
+            left: 0;
+            width: 0;
+            height: 1px;
+            background: #8b5cf6;
+            transition: width 0.3s ease;
+        }
+
+        .link:hover {
+            color: #a78bfa;
+        }
+
+        .link:hover::after {
+            width: 100%;
+        }
+
+        h2 {
+            font-size: 0.8rem;
+            text-transform: uppercase;
+            letter-spacing: 0.15em;
+            color: #52525b;
+            margin-bottom: 24px;
+            font-weight: 600;
+        }
+
+        .about-text {
+            font-size: 1.1rem;
+            color: #d4d4d8;
+            line-height: 1.8;
+            font-weight: 300;
+            max-width: 680px;
+        }
+
+        .experience-item, .project-item {
+            margin-bottom: 32px;
+            padding: 20px;
+            background: rgba(255, 255, 255, 0.02);
+            border: 1px solid rgba(255, 255, 255, 0.05);
+            backdrop-filter: blur(10px);
+            transition: all 0.4s ease;
+            border-radius: 4px;
+        }
+
+        .experience-item:hover, .project-item:hover {
+            background: rgba(255, 255, 255, 0.04);
+            border-color: rgba(139, 92, 246, 0.3);
+            transform: translateY(-2px);
+        }
+
+        .item-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: baseline;
+            margin-bottom: 8px;
+            flex-wrap: wrap;
+            gap: 8px;
+        }
+
+        .job-title, .project-title {
+            font-size: 1.1rem;
+            color: #ffffff;
+            font-weight: 600;
+        }
+
+        .date {
+            font-size: 0.85rem;
+            color: #71717a;
+            font-weight: 400;
+        }
+
+        .company {
+            font-size: 0.95rem;
+            color: #8b5cf6;
+            margin-bottom: 8px;
+            font-weight: 500;
+        }
+
+        .description {
+            color: #a1a1aa;
+            font-size: 0.95rem;
+            line-height: 1.6;
+            font-weight: 300;
+        }
+
+        .skills-container {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 10px;
+            margin-top: 8px;
+        }
+
+        .skill {
+            color: #d4d4d8;
+            font-size: 0.9rem;
+            font-weight: 400;
+            padding: 8px 16px;
+            background: rgba(255, 255, 255, 0.03);
+            border: 1px solid rgba(255, 255, 255, 0.08);
+            border-radius: 2px;
+            transition: all 0.3s ease;
+        }
+
+        .skill:hover {
+            background: rgba(139, 92, 246, 0.1);
+            border-color: rgba(139, 92, 246, 0.3);
+            transform: translateY(-1px);
+        }
+
+        .contact {
+            text-align: center;
+            padding: 80px 0 100px;
+        }
+
+        .contact-text {
+            font-size: 1.8rem;
+            color: #ffffff;
+            margin-bottom: 32px;
+            font-weight: 300;
+            letter-spacing: -0.01em;
+        }
+
+        .contact-links {
+            display: flex;
+            gap: 32px;
+            justify-content: center;
+            flex-wrap: wrap;
+        }
+
+        .separator {
+            color: #27272a;
+            user-select: none;
+        }
+
+        @media (max-width: 768px) {
+            h1 {
+                font-size: 2.4rem;
+            }
+
+            .hero {
+                padding: 80px 0 60px;
+            }
+
+            section {
+                padding: 48px 0;
+            }
+
+            .contact {
+                padding: 60px 0 80px;
+            }
+
+            .item-header {
+                flex-direction: column;
+                align-items: flex-start;
+            }
+
+            .contact-links {
+                gap: 24px;
+            }
+
+            .separator {
+                display: none;
+            }
+        }
+
+        @media (max-width: 480px) {
+            h1 {
+                font-size: 2rem;
+            }
+
+            .contact-text {
+                font-size: 1.4rem;
+            }
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <!-- Hero Section -->
+        <section class="hero">
+            <h1>Abdulaziz Toba Abdulaziz</h1>
+            <div class="title">Senior .NET Software Engineer</div>
+            <p class="subtitle">Building scalable, reliable, and elegant backend systems with .NET and Clean Architecture.</p>
+            <div class="hero-links">
+                <a href="https://www.linkedin.com/in/abdulaziz-toba-aa7916337/" class="link" target="_blank">LinkedIn</a>
+                <a href="https://github.com/aziztoba" class="link" target="_blank">GitHub</a>
+                <a href="mailto:abdulaziztoba@outlook.com" class="link">Email</a>
+            </div>
+        </section>
+
+        <!-- About Section -->
+        <section>
+            <h2>About</h2>
+            <p class="about-text">I'm a Senior Software Engineer passionate about crafting clean architectures, scaling backend systems, and mentoring engineering teams. I believe great code is quiet, elegant, and built to last.</p>
+        </section>
+
+        <!-- Experience Section -->
+        <section>
+            <h2>Experience</h2>
+            
+            <div class="experience-item">
+                <div class="item-header">
+                    <div class="job-title">Senior .NET Software Engineer</div>
+                    <div class="date">Jan 2025 – Present</div>
+                </div>
+                <div class="company">Mannai Corporation QPSC</div>
+                <p class="description">Working on Qatar's National Super App and Falcon Service (CITES Integration).</p>
+            </div>
+
+            <div class="experience-item">
+                <div class="item-header">
+                    <div class="job-title">Senior .NET Developer</div>
+                    <div class="date">Mar 2021 – Jan 2025</div>
+                </div>
+                <div class="company">Apex Systems</div>
+                <p class="description">Led backend architecture using CQRS and Microservices.</p>
+            </div>
+
+            <div class="experience-item">
+                <div class="item-header">
+                    <div class="job-title">.NET Developer</div>
+                    <div class="date">Jul 2019 – Mar 2021</div>
+                </div>
+                <div class="company">Al Raedah El Kubra</div>
+                <p class="description">Delivered enterprise systems with .NET Core and SQL Server.</p>
+            </div>
+        </section>
+
+        <!-- Projects Section -->
+        <section>
+            <h2>Projects</h2>
+            
+            <div class="project-item">
+                <div class="project-title">Qatar Super App</div>
+                <p class="description">A government-scale digital platform integrating multiple citizen services.</p>
+            </div>
+
+            <div class="project-item">
+                <div class="project-title">Falcon Service (CITES)</div>
+                <p class="description">Managing falcon permits and compliance with international trade laws.</p>
+            </div>
+
+            <div class="project-item">
+                <div class="project-title">POS System (Apex)</div>
+                <p class="description">Real-time sales management with .NET Core 8.0 and Angular 16.</p>
+            </div>
+
+            <div class="project-item">
+                <div class="project-title">Retail & Accounting Systems (Al Raedah)</div>
+                <p class="description">Desktop + API solutions enhancing operational efficiency.</p>
+            </div>
+        </section>
+
+        <!-- Skills Section -->
+        <section>
+            <h2>Skills</h2>
+            <div class="skills-container">
+                <span class="skill">.NET</span>
+                <span class="skill">ASP.NET Core</span>
+                <span class="skill">C#</span>
+                <span class="skill">Web API</span>
+                <span class="skill">EF Core</span>
+                <span class="skill">Dapper</span>
+                <span class="skill">Azure</span>
+                <span class="skill">Redis</span>
+                <span class="skill">SignalR</span>
+                <span class="skill">CQRS</span>
+                <span class="skill">Microservices</span>
+                <span class="skill">Prometheus</span>
+                <span class="skill">Grafana</span>
+                <span class="skill">Clean Architecture</span>
+            </div>
+        </section>
+
+        <!-- Contact Section -->
+        <section class="contact">
+            <div class="contact-text">Let's build something meaningful.</div>
+            <div class="contact-links">
+                <a href="https://www.linkedin.com/in/abdulaziz-toba-aa7916337/" class="link" target="_blank">LinkedIn</a>
+                <span class="separator">|</span>
+                <a href="https://github.com/aziztoba" class="link" target="_blank">GitHub</a>
+                <span class="separator">|</span>
+                <a href="mailto:abdulaziztoba@outlook.com" class="link">Email</a>
+            </div>
+        </section>
+    </div>
+</body>
+</html>
