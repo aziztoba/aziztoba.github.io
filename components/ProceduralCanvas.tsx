@@ -16,6 +16,7 @@ export function ProceduralCanvas({
 }) {
   const ref = useRef<HTMLCanvasElement>(null);
   const pointerRef = useRef({ x: 0.5, y: 0.5 });
+  const deskRef = useRef({ mouse: true, down: false, button: 0, blend: 1 });
   const { theme } = useTheme();
   const reduced = useReducedMotion();
   useEffect(() => {
@@ -25,6 +26,7 @@ export function ProceduralCanvas({
     if (!ctx) return;
     let frame = 0,
       last = 0,
+      canvasLeft = 0,
       width = 0,
       height = 0,
       pressed = 0;
@@ -33,6 +35,7 @@ export function ProceduralCanvas({
     let visible = true;
     const resize = () => {
       const r = canvas.getBoundingClientRect();
+      canvasLeft = r.left;
       width = r.width;
       height = r.height;
       const dpr = Math.min(devicePixelRatio || 1, 2);
@@ -42,12 +45,28 @@ export function ProceduralCanvas({
       draw(performance.now());
     };
     const move = (e: PointerEvent) => {
+      if (e.pointerType === "touch") return;
       pointer.x = e.clientX / innerWidth;
       pointer.y = e.clientY / innerHeight;
+      deskRef.current.mouse = true;
       if (reduced) draw(0);
     };
     const key = () => {
       pressed = performance.now();
+      deskRef.current.mouse = false;
+      deskRef.current.down = false;
+      if (reduced && kind === "desk") draw(0);
+    };
+    const down = (e: PointerEvent) => {
+      if (e.pointerType === "touch") return;
+      move(e);
+      deskRef.current.down = true;
+      deskRef.current.button = e.button;
+      if (reduced) draw(0);
+    };
+    const up = () => {
+      deskRef.current.down = false;
+      if (reduced) draw(0);
     };
     const visibility = () => {
       visible = !document.hidden;
@@ -81,7 +100,7 @@ export function ProceduralCanvas({
       ctx.clearRect(0, 0, width, height);
       ctx.globalAlpha = 1;
       if (kind === "desk") {
-        const scale = Math.min(1, width / 580);
+        const scale = Math.min(1, width / 740);
         ctx.save();
         ctx.translate(width / 2, height - 10);
         ctx.scale(scale, scale);
@@ -92,23 +111,95 @@ export function ProceduralCanvas({
           "⇧  z x c v b n m , . /  ⇧",
         ];
         rows.forEach((r, i) => text(r, -181 + i * 17, -163 + i * 26, 12, 0.15));
+        const desk = deskRef.current;
+        const target = desk.mouse && !active ? 1 : 0;
+        desk.blend = reduced
+          ? target
+          : desk.blend + (target - desk.blend) * 0.18;
+        const mx = 196 + (pointer.x - 0.5) * 12;
+        const my = (pointer.y - 0.5) * 6;
+        const clicking = desk.down && desk.blend > 0.5;
+        ctx.save();
+        ctx.translate(mx, my);
+        ctx.beginPath();
+        ctx.roundRect(-17, -130, 34, 56, 17);
+        ctx.strokeStyle = theme.fg;
+        ctx.lineWidth = 0.7;
+        ctx.globalAlpha = 0.48;
+        ctx.stroke();
+        if (clicking) {
+          ctx.save();
+          ctx.clip();
+          ctx.fillStyle = theme.fg;
+          ctx.globalAlpha = 0.3;
+          ctx.fillRect(desk.button === 2 ? 0 : -17, -130, 17, 23);
+          ctx.restore();
+        }
+        line(
+          [
+            [-17, -107],
+            [17, -107],
+          ],
+          0.48,
+        );
+        line(
+          [
+            [0, -129],
+            [0, -107],
+          ],
+          0.48,
+        );
+        ctx.restore();
+        text(`['mouse:u'] ${pointer.x.toFixed(7)}`, mx + 25, my - 123, 7, 0.7);
+        text(pointer.y.toFixed(7), mx + 25, my - 114, 7, 0.7);
         const tap =
           now - pressed < 180
             ? Math.sin(((now - pressed) / 180) * Math.PI) * 9
             : Math.sin(time * 2.4) * 2;
         for (const side of [-1, 1]) {
           const x = side * 63 - 42;
+          const blend = side === 1 ? desk.blend : 0;
+          const pose = (keyboard: number[], mouse: number[]) => [
+            keyboard[0] + (mouse[0] + mx - keyboard[0]) * blend,
+            keyboard[1] + (mouse[1] + my - keyboard[1]) * blend,
+          ];
           line(
             [
-              [x, -114],
-              [x + 84, -114],
-              [x + 84, -5],
-              [x, -5],
-              [x, -114],
+              pose([x, -114], [-29, -130]),
+              pose([x + 84, -114], [30, -130]),
+              pose([x + 84, -5], [30, -25]),
+              pose([x, -5], [-29, -25]),
+              pose([x, -114], [-29, -130]),
             ],
             0.35,
           );
-          const wrist = [x + 47, -11];
+          const wrist = pose([x + 47, -11], [3, -33]);
+          const mouseFingers = [
+            [
+              [-6, -123],
+              [-6, -113],
+              [-6, -104],
+              [-6, -92],
+            ],
+            [
+              [1, -123],
+              [2, -113],
+              [3, -104],
+              [3, -91],
+            ],
+            [
+              [13, -107],
+              [13, -98],
+              [12, -88],
+              [10, -83],
+            ],
+            [
+              [23, -94],
+              [21, -88],
+              [18, -81],
+              [16, -78],
+            ],
+          ];
           const tips: number[][] = [];
           for (let f = 0; f < 4; f++) {
             const fx = x + 9 + f * 21,
@@ -118,7 +209,12 @@ export function ProceduralCanvas({
               [fx + side * 1, fy + 14],
               [fx + side * 3, fy + 28],
               [fx + side * 7, -70],
-            ];
+            ].map((point, joint) => {
+              const mouse = [...mouseFingers[f][joint]];
+              if (clicking && f === (desk.button === 2 ? 1 : 0) && joint < 2)
+                mouse[1] += 3;
+              return pose(point, mouse);
+            });
             tips.push(joints[3]);
             line([...joints, wrist], 0.7);
             joints.forEach((p) => {
@@ -128,22 +224,31 @@ export function ProceduralCanvas({
             });
           }
           line(tips, 0.65);
-          line([wrist, [x + 72, -27], [x + 77, -56]], 0.6);
+          line(
+            [
+              wrist,
+              pose([x + 72, -27], [-15, -55]),
+              pose([x + 77, -56], [-23, -76]),
+              pose([x + 77, -56], [-22, -103]),
+            ],
+            0.6,
+          );
           text(
-            `['hand:${side < 0 ? "l" : "r"}'] ${(pointer.x * 0.2 + 0.4).toFixed(6)}`,
-            x - 4,
-            -121,
+            `['hand${side < 0 ? "0" : "1"}:u'] ${((canvasLeft + width / 2 + (x + 42 + (mx - x - 42) * blend) * scale) / innerWidth).toFixed(6)}`,
+            pose([x - 4, -121], [-75, -137])[0],
+            pose([x - 4, -121], [-75, -137])[1],
             7,
             0.7,
           );
         }
-        line(
-          [
-            [-60, -58],
-            [60, -58],
-          ],
-          0.3,
-        );
+        if (desk.blend < 0.5)
+          line(
+            [
+              [-60, -58],
+              [60, -58],
+            ],
+            0.3,
+          );
         ctx.restore();
       } else if (kind === "eye") {
         const cx = width * 0.5 + (pointer.x - 0.5) * 18,
@@ -368,6 +473,12 @@ export function ProceduralCanvas({
     });
     window.addEventListener("pointermove", move);
     window.addEventListener("keydown", key);
+    if (kind === "desk") {
+      window.addEventListener("pointerdown", down);
+      window.addEventListener("pointerup", up);
+      window.addEventListener("pointercancel", up);
+      window.addEventListener("blur", up);
+    }
     document.addEventListener("visibilitychange", visibility);
     if (!reduced) frame = requestAnimationFrame(tick);
     return () => {
@@ -375,6 +486,10 @@ export function ProceduralCanvas({
       observer.disconnect();
       window.removeEventListener("pointermove", move);
       window.removeEventListener("keydown", key);
+      window.removeEventListener("pointerdown", down);
+      window.removeEventListener("pointerup", up);
+      window.removeEventListener("pointercancel", up);
+      window.removeEventListener("blur", up);
       document.removeEventListener("visibilitychange", visibility);
     };
   }, [kind, theme, reduced, active]);
