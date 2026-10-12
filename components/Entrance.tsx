@@ -1,10 +1,12 @@
 "use client";
-import { useEffect, useState } from "react";
+import { useCallback, useEffect, useState } from "react";
+import { useRouter } from "next/navigation";
 import { Brand } from "./Brand";
 import { ProceduralCanvas } from "./ProceduralCanvas";
 import { ThemePicker } from "./ThemePicker";
 import { useReducedMotion } from "./ThemeProvider";
 import { codeScenes } from "../data/code";
+import { EntranceTransition } from "./EntranceTransition";
 function Syntax({ line }: { line: string }) {
   return (
     <>
@@ -41,6 +43,15 @@ export function Entrance() {
   const [cursor, setCursor] = useState(16);
   const [leaving, setLeaving] = useState(false);
   const reduced = useReducedMotion();
+  const router = useRouter();
+  const complete = useCallback(() => router.push("/site/"), [router]);
+  const enter = useCallback(() => {
+    if (reduced) complete();
+    else setLeaving(true);
+  }, [reduced, complete]);
+  useEffect(() => {
+    router.prefetch("/site/");
+  }, [router]);
   const current = codeScenes[scene];
   useEffect(() => {
     if (reduced) return;
@@ -58,6 +69,7 @@ export function Entrance() {
     const key = (e: KeyboardEvent) => {
       if (
         picker ||
+        leaving ||
         e.ctrlKey ||
         e.metaKey ||
         e.altKey ||
@@ -72,13 +84,7 @@ export function Entrance() {
         !(e.target as HTMLElement)?.closest("a,button")
       ) {
         e.preventDefault();
-        setLeaving(true);
-        setTimeout(
-          () => {
-            location.href = "/site/";
-          },
-          reduced ? 0 : 420,
-        );
+        enter();
       } else if (e.key === "j" || e.key === "ArrowDown") {
         e.preventDefault();
         setCursor((n) => (n + 1) % 36);
@@ -89,7 +95,7 @@ export function Entrance() {
     };
     window.addEventListener("keydown", key);
     return () => window.removeEventListener("keydown", key);
-  }, [picker, reduced]);
+  }, [picker, leaving, enter]);
   return (
     <main className={`entrance ${leaving ? "leaving" : ""}`}>
       <Brand />
@@ -145,13 +151,9 @@ export function Entrance() {
             href="/site/"
             aria-label="Enter portfolio"
             onClick={(e) => {
-              if (!reduced) {
-                e.preventDefault();
-                setLeaving(true);
-                setTimeout(() => {
-                  location.href = "/site/";
-                }, 420);
-              }
+              if (e.ctrlKey || e.metaKey || e.shiftKey || e.altKey) return;
+              e.preventDefault();
+              enter();
             }}
           >
             enter ↩
@@ -159,6 +161,7 @@ export function Entrance() {
         </div>
       </footer>
       {picker && <ThemePicker onClose={() => setPicker(false)} />}
+      {leaving && <EntranceTransition onComplete={complete} />}
     </main>
   );
 }

@@ -711,13 +711,31 @@ img {
 .entrance {
   height: 100dvh;
   position: relative;
-  transition:
-    opacity 0.42s,
-    filter 0.42s;
 }
-.entrance.leaving {
+.entrance.leaving > .brand-row,
+.entrance.leaving > .entrance-footer,
+.entrance.leaving > .entrance-desk {
   opacity: 0;
-  filter: blur(4px);
+  transition: opacity 180ms;
+  pointer-events: none;
+}
+.entrance-transition {
+  position: fixed;
+  inset: 0;
+  width: 100vw;
+  height: 100dvh;
+  z-index: 100;
+}
+.portfolio {
+  animation: portfolio-arrive 420ms ease-out both;
+}
+@keyframes portfolio-arrive {
+  from {
+    opacity: 0;
+  }
+  to {
+    opacity: 1;
+  }
 }
 .entrance .brand-row {
   width: 720px;
