@@ -9,6 +9,7 @@ import { ProjectWheel } from "./ProjectWheel";
 import { Terminal } from "./Terminal";
 import { ProceduralCanvas } from "./ProceduralCanvas";
 import { galleryEvent } from "./Gallery";
+import { EyeTracking } from "./EyeTracking";
 export function Portfolio() {
   const [id, setId] = useState("about"),
     [drawer, setDrawer] = useState(false),
@@ -259,18 +260,18 @@ export function Portfolio() {
             )}
           </div>
         </div>
-        <div className="project-stats">
-          <span>
-            {repo
-              ? `☆ ${repo.stars} · forks ${repo.forks}`
-              : project
-                ? "work / private source"
-                : `${github.followers} followers · ☆ ${github.stars}`}
-          </span>
-          <span className="dim">
-            {project?.organization || "github / public"}
-          </span>
-        </div>
+        {project && (
+          <div className="project-stats">
+            <span>
+              {repo
+                ? `${repo.language || "code"} / public source`
+                : "work / private source"}
+            </span>
+            <span className="dim">
+              {project?.organization || "github / public"}
+            </span>
+          </div>
+        )}
         <div className="agent-status">
           <span>
             WORM{" "}
@@ -310,6 +311,7 @@ export function Portfolio() {
       <div className="editor-desk" aria-hidden="true">
         <ProceduralCanvas kind="desk" active={typing} />
       </div>
+      <EyeTracking />
       {worm && (
         <div className="worm" aria-hidden="true">
           · · · · · · · ●

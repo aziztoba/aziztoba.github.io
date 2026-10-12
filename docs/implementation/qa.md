@@ -43,3 +43,9 @@ The previous repository consists of `index.html` at `b23533737ae9e5233480d2bc70b
 GitHub Actions installs pinned dependencies, tests, typechecks, builds a static export, runs Chromium integration tests and deploys the `out/` Pages artifact. See the repository Actions history for the exact deployed commit and run.
 
 Independent read-only review identified three issues, all fixed with regression tests: buffer Tab focus loop, entrance Enter overriding anchors, and unsorted GitHub contribution dates. No deferred minor findings.
+
+## Eye tracking and metric display correction
+
+User-requested follow-up: removed follower and star counts from the profile, footer and public-project buffers. Added the two dashed eye connections and outlined targets: pointer position and terminal/command cursor. Lines use the active palette accent (pink-red in Labra), follow typing and scrolling, remain non-interactive, and are hidden for dialogs and narrow layouts. Reduced motion uses event-driven updates.
+
+Verification: six unit tests, fifteen Chromium tests, typecheck and production build passed. New browser regressions cover absence of counts, both ray endpoints, pointer movement, theme switching, lightbox hiding/restoration and mobile hiding. Independent scoped review found no important issue. Original follow-up visual evidence is local at `docs/qa/eye-tracking-labra.png`.

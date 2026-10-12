@@ -15,6 +15,7 @@ export function ProceduralCanvas({
   active?: boolean;
 }) {
   const ref = useRef<HTMLCanvasElement>(null);
+  const pointerRef = useRef({ x: 0.5, y: 0.5 });
   const { theme } = useTheme();
   const reduced = useReducedMotion();
   useEffect(() => {
@@ -28,7 +29,7 @@ export function ProceduralCanvas({
       height = 0,
       pressed = 0;
     const started = performance.now();
-    const pointer = { x: 0.5, y: 0.5 };
+    const pointer = pointerRef.current;
     let visible = true;
     const resize = () => {
       const r = canvas.getBoundingClientRect();

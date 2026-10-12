@@ -72,10 +72,8 @@ export function Terminal({
               <dd>{project.stack.join(" · ")}</dd>
               {repo && (
                 <>
-                  <dt>github</dt>
-                  <dd>
-                    ☆ {repo.stars} · forks {repo.forks} · {repo.language}
-                  </dd>
+                  <dt>updated</dt>
+                  <dd>{repo.pushedAt.slice(0, 10)}</dd>
                 </>
               )}
             </dl>
@@ -130,10 +128,6 @@ export function Terminal({
           <dl>
             <dt>repos</dt>
             <dd>{github.publicRepos} public repositories</dd>
-            <dt>stars</dt>
-            <dd>
-              {github.stars} · {github.followers} followers
-            </dd>
             <dt>updated</dt>
             <dd>{github.fetchedAt.slice(0, 10)}</dd>
           </dl>

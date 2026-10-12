@@ -1294,3 +1294,30 @@ img {
     max-width: calc(100% - 44px);
   }
 }
+
+.eye-tracking {
+  position: fixed;
+  inset: 0;
+  width: 100vw;
+  height: 100dvh;
+  pointer-events: none;
+  z-index: 5;
+  overflow: hidden;
+}
+.eye-tracking line {
+  stroke: var(--accent);
+  stroke-width: 0.75;
+  stroke-dasharray: 4 4;
+  opacity: 0.55;
+}
+.eye-tracking rect {
+  fill: none;
+  stroke: var(--dim);
+  stroke-width: 0.75;
+  opacity: 0.6;
+}
+@media (max-width: 1100px) {
+  .eye-tracking {
+    display: none;
+  }
+}

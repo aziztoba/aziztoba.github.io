@@ -188,3 +188,58 @@ test("normal motion types commands, rotates slides and reacts to keys", async ({
     page.getByRole("link", { name: "Enter portfolio" }),
   ).toBeVisible();
 });
+
+test("profile and public projects omit follower and star readouts", async ({
+  page,
+}) => {
+  await page.goto("/site/");
+  await expect(page.locator(".buffer")).toContainText("public repositories");
+  await expect(page.locator("body")).not.toContainText(/followers|stars|☆/i);
+  await page.goto("/site/#Luftborn");
+  await expect(page.locator(".buffer")).toContainText("Layered backend");
+  await expect(page.locator("body")).not.toContainText(/followers|stars|☆/i);
+});
+
+test("eye tracks pointer and terminal with two theme-colored dashed lines", async ({
+  page,
+}) => {
+  await page.goto("/site/#voice-agent");
+  const overlay = page.locator(".eye-tracking");
+  await expect(overlay.locator("line")).toHaveCount(2);
+  await expect(overlay).toBeVisible();
+  await page.mouse.move(700, 380);
+  await expect
+    .poll(() => overlay.locator("line").first().getAttribute("x2"))
+    .toBe("700");
+  await expect
+    .poll(() => overlay.locator("line").first().getAttribute("y2"))
+    .toBe("380");
+  const cursor = page.locator(".buffer .cursor").last();
+  await cursor.scrollIntoViewIfNeeded();
+  const rect = await cursor.boundingBox();
+  await expect
+    .poll(async () =>
+      Number(await overlay.locator("line").nth(1).getAttribute("x2")),
+    )
+    .toBeCloseTo(rect!.x + rect!.width / 2, 0);
+  await page.mouse.move(650, 350);
+  await expect
+    .poll(() => overlay.locator("line").first().getAttribute("x2"))
+    .toBe("650");
+  await page.keyboard.press(":");
+  await page.keyboard.type("colo labra");
+  await page.keyboard.press("Enter");
+  await expect(page.locator("html")).toHaveAttribute("data-theme", "labra");
+  expect(
+    await overlay
+      .locator("line")
+      .first()
+      .evaluate((el) => getComputedStyle(el).strokeDasharray),
+  ).not.toBe("none");
+  await page.getByRole("button", { name: "View large" }).click();
+  await expect(overlay).toBeHidden();
+  await page.keyboard.press("Escape");
+  await expect(overlay).toBeVisible();
+  await page.setViewportSize({ width: 390, height: 844 });
+  await expect(overlay).toBeHidden();
+});
