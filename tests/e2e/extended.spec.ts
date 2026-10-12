@@ -5,6 +5,15 @@ test.use({ reducedMotion: "reduce" });
 test("keyboard Tab reaches terminal links and Enter respects the entrance GitHub link", async ({
   page,
 }) => {
+  // Verify the outbound link without depending on GitHub's network response time.
+  await page
+    .context()
+    .route("https://github.com/aziztoba", (route) =>
+      route.fulfill({
+        contentType: "text/html",
+        body: "<title>GitHub profile</title>",
+      }),
+    );
   await page.goto("/site/");
   await page.getByRole("option", { name: "whoami", exact: true }).focus();
   await page.keyboard.press("Tab");
@@ -15,7 +24,7 @@ test("keyboard Tab reaches terminal links and Enter respects the entrance GitHub
   await page.locator(".github-link").focus();
   const popup = page.waitForEvent("popup", { timeout: 3000 });
   await page.keyboard.press("Enter");
-  await popup;
+  await expect(await popup).toHaveURL("https://github.com/aziztoba");
   await expect(page).toHaveURL(/\/$/);
 });
 test("Tab enters the buffer from the wheel and gallery arrows work from wheel focus", async ({
